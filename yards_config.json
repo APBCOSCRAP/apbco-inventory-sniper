@@ -1,0 +1,54 @@
+{
+  "yards": [
+    {
+      "name": "Orlando, FL",
+      "slug": "orlando-1134",
+      "enabled": true
+    },
+    {
+      "name": "Tampa, FL",
+      "slug": "tampa-1180",
+      "enabled": false
+    },
+    {
+      "name": "Gainesville, FL",
+      "slug": "gainesville-1224",
+      "enabled": false
+    },
+    {
+      "name": "Largo, FL",
+      "slug": "largo-1189",
+      "enabled": false
+    },
+    {
+      "name": "Bradenton, FL",
+      "slug": "bradenton-1185",
+      "enabled": false
+    },
+    {
+      "name": "Clearwater, FL",
+      "slug": "clearwater-1190",
+      "enabled": false
+    },
+    {
+      "name": "West Palm Beach, FL",
+      "slug": "west-palm-beach-1196",
+      "enabled": false
+    },
+    {
+      "name": "Daytona, FL",
+      "slug": "daytona-1225",
+      "enabled": true
+    },
+    {
+      "name": "Budget U Pull It - Winter Garden, FL",
+      "slug": "budgetupullit",
+      "enabled": true
+    },
+    {
+      "name": "Central Florida Pick & Pay - Orlando, FL",
+      "slug": "centralfloridapickandpay",
+      "enabled": true
+    }
+  ]
+}
