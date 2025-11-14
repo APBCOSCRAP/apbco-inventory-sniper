@@ -520,11 +520,10 @@ def scan_budget_upullit(yard_name, query, want_drive):
       - Return one row per VIN (no year filtering)
     """
 
-    def scan_budget_upullit(yard_name, query, want_drive):
-        # On cloud (no Playwright installed), just skip Budget for now
-        if sync_playwright is None:
-            st.warning("Budget U Pull It scanning is disabled on this deployment.")
-            return []
+    # On cloud (no Playwright installed), just skip Budget for now
+    if sync_playwright is None:
+        st.warning("Budget U Pull It scanning is disabled on this deployment.")
+        return []
 
     make, model = parse_budget_make_model(query)
     if not make or not model:
@@ -534,47 +533,36 @@ def scan_budget_upullit(yard_name, query, want_drive):
     url = f"https://budgetupullit.com/current-inventory/?make={make}&model={model}"
 
     try:
-        # === Load JS-rendered HTML ===
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             page = browser.new_page()
             page.goto(url, timeout=60000)
-            page.wait_for_timeout(2500)  # Wait for inventory load
+            page.wait_for_timeout(2500)
             html = page.content()
             browser.close()
 
         soup = BeautifulSoup(html, "html.parser")
 
-        # === Get all text lines ===
         text = soup.get_text("\n", strip=True)
         lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
 
-        # === Extract all VINs from page ===
         vin_pattern = re.compile(r"\b[A-HJ-NPR-Z0-9]{17}\b")
         vins = []
         for ln in lines:
             matches = vin_pattern.findall(ln)
             vins.extend(matches)
 
-        vins = sorted(set(vins))  # unique VINs
-
-        # DEBUG: show what we see
-        st.write(f"BUDGET DEBUG: found {len(vins)} VINs on page for {make} {model}")
-        for vin in vins:
-            st.write("  VIN on page:", vin)
+        vins = sorted(set(vins))
 
         rows_out = []
-
         for vin in vins:
-            # Try NHTSA decode (optional)
             vin_info = decode_vin_nhtsa(vin)
 
-            # Infer year from 10th VIN character if helper exists
+            # Try to infer year from VIN first
             year_dec = None
             try:
                 year_dec = infer_year_from_vin_10th(vin)
             except NameError:
-                # If infer_year_from_vin_10th is not defined, ignore
                 year_dec = vin_info.get("year")
 
             make_dec = vin_info.get("make") or make
@@ -615,7 +603,6 @@ def scan_budget_upullit(yard_name, query, want_drive):
     except Exception as e:
         st.error(f"{yard_name} (Budget U Pull It) error: {e}")
         return []
-
 
 def card_to_row(card, yard_name, slug, query, want_drive, search_url):
     text = " ".join(card.get_text(" ", strip=True).split())
